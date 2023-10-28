@@ -4,12 +4,11 @@
 
 // const http = require("http");
 
-const { request } = require("express");
 const express = require("express");
 
 const mysql = require("mysql");
 
-const cors= require("cors")
+const cors = require("cors");
 
 // http
 //   .createServer((request, response) => {
@@ -49,7 +48,17 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors())
+app.use(cors());
+
+app.use((req, res, next) => {
+  console.log("middleware",req.body);
+
+  req.body.datetime=new Date()
+
+  next();
+});
+
+
 
 app.post("/", (request, response) => {
   response.send("hello world from express");
@@ -69,7 +78,7 @@ app.get("/student", (request, response) => {
 app.post("/addstudent", (req, res) => {
   console.log("req.body", req.body);
 
-  const {name,mobile}= req.body
+  const { name, mobile } = req.body;
 
   let sql = `insert INTO student (NAME,mobile) values ('${name}','${mobile}')`;
   con.query(sql, (err, result) => {
@@ -88,32 +97,14 @@ app.post("/addstudent", (req, res) => {
   });
 });
 
+app.post("/updatestudent", (req, res) => {
+  try {
+    const { mobile, id } = req.body;
 
-
-app.post("/updatestudent",(req,res)=>{
-try {
-
-
-  const {mobile,id}= req.body
-
-let sql=`update student set mobile='${mobile}' where id='${id}';`
-
-
-  
-} catch (error) {
-
-
-  
-}
-
-
-})
-
+    let sql = `update student set mobile='${mobile}' where id='${id}';`;
+  } catch (error) {}
+});
 
 //delete api
-
-
-
-
 
 app.listen(4000);
